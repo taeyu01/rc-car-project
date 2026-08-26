@@ -8,10 +8,10 @@
 #include <stdexcept>
 #include <thread>
 
-MotorController::MotorController(PwmController& pwm)
+MotorController::MotorController(PwmController &pwm)
     : pwm_(pwm),
-      motor1Direction_(23),
-      motor2Direction_(24)
+      motor1Direction_(23), motor2Direction_(24)
+// GpioOutput 생성자를 호출함
 {
     pwm_.configureMotorTimer();
 
@@ -29,10 +29,7 @@ MotorController::~MotorController()
     }
 }
 
-void MotorController::setReversed(
-    int motor,
-    bool reversed
-)
+void MotorController::setReversed(int motor, bool reversed)
 {
     if (motor == 1)
     {
@@ -44,41 +41,24 @@ void MotorController::setReversed(
     }
     else
     {
-        throw std::out_of_range(
-            "Motor number must be 1 or 2"
-        );
+        throw std::out_of_range("Motor number must be 1 or 2");
     }
 }
 
-void MotorController::setSpeed(
-    int motor,
-    double speedPercent
-)
+void MotorController::setSpeed(int motor, double speedPercent)
 {
     if (motor != 1 && motor != 2)
     {
-        throw std::out_of_range(
-            "Motor number must be 1 or 2"
-        );
+        throw std::out_of_range("Motor number must be 1 or 2");
     }
 
-    speedPercent = std::clamp(
-        speedPercent,
-        -100.0,
-        100.0
-    );
+    speedPercent = std::clamp(speedPercent, -100.0, 100.0);
 
     int pwmChannel = motor == 1 ? 13 : 12;
 
-    GpioOutput& direction =
-        motor == 1
-        ? motor1Direction_
-        : motor2Direction_;
+    GpioOutput &direction = motor == 1 ? motor1Direction_ : motor2Direction_;
 
-    bool reversed =
-        motor == 1
-        ? motor1Reversed_
-        : motor2Reversed_;
+    bool reversed = motor == 1 ? motor1Reversed_ : motor2Reversed_;
 
     if (std::abs(speedPercent) < 0.001)
     {
@@ -93,18 +73,14 @@ void MotorController::setSpeed(
 
     pwm_.setDutyPercent(pwmChannel, 0.0);
 
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(10)
-    );
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
     direction.set(forward);
 
-    pwm_.setDutyPercent(
-        pwmChannel,
-        std::abs(speedPercent)
-    );
+    pwm_.setDutyPercent(pwmChannel, std::abs(speedPercent));
 }
 
+// 모터 1과 모터 2에 같은 속도 명령을 한 번에 주려고 만든 편의 함수
 void MotorController::drive(double speedPercent)
 {
     setSpeed(1, speedPercent);

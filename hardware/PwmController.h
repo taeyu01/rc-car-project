@@ -8,7 +8,7 @@ class I2cDevice;
 class PwmController
 {
 public:
-    explicit PwmController(I2cDevice& i2c);
+    explicit PwmController(I2cDevice &i2c);
 
     void configureServoTimer();
     void configureMotorTimer();
@@ -17,14 +17,10 @@ public:
     void setDutyPercent(int channel, double percent);
 
 private:
-    void setTimer(
-        int timer,
-        uint16_t prescaler,
-        uint16_t period
-    );
+    void setTimer(int timer, uint16_t prescaler, uint16_t period);
 
     int getTimer(int channel) const;
 
-    I2cDevice& i2c_;
+    I2cDevice &i2c_;
     std::array<uint16_t, 7> periods_{};
 };
