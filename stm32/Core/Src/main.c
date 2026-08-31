@@ -133,13 +133,15 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-    uint8_t rx[5];
+    uint8_t rx[8];
 
-    HAL_UART_Receive(&huart3, rx, 5, HAL_MAX_DELAY);
+    HAL_UART_Receive(&huart3, rx, 8, HAL_MAX_DELAY);
 
-    if (memcmp(rx, "Hello", 5) == 0)
+    if (memcmp(rx, "SPEED:", 6) == 0)
     {
-      HAL_UART_Transmit(&huart3, (uint8_t *)"ACK", 3, HAL_MAX_DELAY);
+      int speed = (rx[6] - '0') * 10 + (rx[7] - '0');
+
+      HAL_UART_Transmit(&huart3, (uint8_t *)"OK", 2, HAL_MAX_DELAY);
     }
   }
   /* USER CODE END 3 */
